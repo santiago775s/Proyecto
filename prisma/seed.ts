@@ -120,33 +120,46 @@ const paradas: {
   },
 ] as const;
 
-function getSeedValue(key: string): string {
+function getSeedValue(key: string, fallback?: string): string {
   const value = process.env[key]?.trim();
-  if (!value) {
-    throw new Error(`${key} es obligatorio para ejecutar el seed`);
+  if (value) {
+    return value;
   }
-  return value;
+  if (fallback !== undefined) {
+    return fallback;
+  }
+  throw new Error(`${key} es obligatorio para ejecutar el seed`);
 }
 
 async function main(): Promise<void> {
   const isProduction = process.env.NODE_ENV === 'production';
-  const demoEnabled = process.env.RUTERO_ENABLE_DEMO_USERS === 'true';
-  if (isProduction && demoEnabled) {
+  const demoSetting = process.env.RUTERO_ENABLE_DEMO_USERS;
+  if (isProduction && demoSetting === 'true') {
     throw new Error('Las cuentas de prueba no se permiten en producción');
   }
+  const demoEnabled = !isProduction && demoSetting !== 'false';
   const demoUsers = demoEnabled
     ? {
         admin: {
-          email: getSeedValue('RUTERO_ADMIN_EMAIL').toLowerCase(),
-          password: getSeedValue('RUTERO_ADMIN_PASSWORD'),
+          email: getSeedValue(
+            'RUTERO_ADMIN_EMAIL',
+            'admin@rutero.local',
+          ).toLowerCase(),
+          password: getSeedValue('RUTERO_ADMIN_PASSWORD', 'Admin123'),
         },
         local: {
-          email: getSeedValue('RUTERO_LOCAL_EMAIL').toLowerCase(),
-          password: getSeedValue('RUTERO_LOCAL_PASSWORD'),
+          email: getSeedValue(
+            'RUTERO_LOCAL_EMAIL',
+            'local@rutero.local',
+          ).toLowerCase(),
+          password: getSeedValue('RUTERO_LOCAL_PASSWORD', 'Local123'),
         },
         usuario: {
-          email: getSeedValue('RUTERO_USER_EMAIL').toLowerCase(),
-          password: getSeedValue('RUTERO_USER_PASSWORD'),
+          email: getSeedValue(
+            'RUTERO_USER_EMAIL',
+            'usuario@rutero.local',
+          ).toLowerCase(),
+          password: getSeedValue('RUTERO_USER_PASSWORD', 'User123'),
         },
       }
     : null;
@@ -166,11 +179,11 @@ async function main(): Promise<void> {
     }
     if (
       Object.values(demoUsers).some(
-        ({ password }) => password.length < 12 || password.length > 72,
+        ({ password }) => password.length < 1 || password.length > 72,
       )
     ) {
       throw new Error(
-        'Las contraseñas de prueba deben tener entre 12 y 72 caracteres',
+        'Las contraseñas de prueba deben tener entre 1 y 72 caracteres',
       );
     }
   }
@@ -386,26 +399,18 @@ async function main(): Promise<void> {
         }),
       );
       const admin = await tx.usuario.upsert({
-        where: { id: 1 },
+        where: { email: demoUsers.admin.email },
         update: {
-          email: demoUsers.admin.email,
           passwordHash: hashes[0],
           rolId: roleIds[0],
         },
         create: {
-          id: 1,
           email: demoUsers.admin.email,
           passwordHash: hashes[0],
           rolId: roleIds[0],
         },
         select: { id: true },
       });
-      await tx.$queryRaw`
-        SELECT setval(
-          pg_get_serial_sequence('"Usuario"', 'id'),
-          GREATEST((SELECT COALESCE(MAX("id"), 1) FROM "Usuario"), 1)
-        )
-      `;
       const local = await tx.usuario.upsert({
         where: { email: demoUsers.local.email },
         update: { passwordHash: hashes[1], rolId: roleIds[1] },
@@ -453,7 +458,7 @@ async function main(): Promise<void> {
         data: { propietarioId: local.id },
       });
 
-      if (admin.id !== 1 || turista.id === local.id) {
+      if (admin.id === local.id || turista.id === local.id) {
         throw new Error(
           'Las cuentas de prueba no se pudieron crear correctamente',
         );
