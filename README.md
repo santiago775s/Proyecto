@@ -64,9 +64,13 @@ cuentas de desarrollo:
 
 | Rol     | Email predeterminado   | Contraseña predeterminada     |
 | ------- | ---------------------- | ----------------------------- |
-| ADMIN   | `admin@rutero.local`   | `Admin123` |
-| LOCAL   | `local@rutero.local`   | `Local123` |
-| USUARIO | `usuario@rutero.local` | `User123`  |
+| ADMIN   | `admin@rutero.local`   | `Admin1234567` |
+| LOCAL   | `local@rutero.local`   | `Local1234567` |
+| USUARIO | `usuario@rutero.local` | `User12345678` |
+
+Si ya ejecutaste el seed, vuelve a ejecutar `npm run db:seed` para actualizar
+las contraseñas de estas cuentas. Las contraseñas configuradas mediante
+variables de entorno deben tener entre 12 y 72 caracteres.
 
 Son credenciales solo para desarrollo local; no las uses en producción. El
 registro público permite crear cuentas `USUARIO` o `LOCAL`, pero nunca elegir
@@ -133,7 +137,7 @@ Login:
 POST /api/v1/auth/login
 Content-Type: application/json
 
-{ "email": "usuario@rutero.local", "password": "User123" }
+{ "email": "usuario@rutero.local", "password": "User12345678" }
 ```
 
 La respuesta contiene `access_token`, `token_type` (`Bearer`) y `expires_in`
