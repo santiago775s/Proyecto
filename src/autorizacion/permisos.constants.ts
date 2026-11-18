@@ -1,5 +1,6 @@
 export const PERMISOS = {
   LUGARES_LEER: 'lugares:leer',
+  LUGARES_VALORAR: 'lugares:valorar',
   LUGARES_ADMINISTRAR: 'lugares:administrar',
   RUTAS_ADMINISTRAR: 'rutas:administrar',
   RECORRIDOS_PROPIOS: 'recorridos:propios',

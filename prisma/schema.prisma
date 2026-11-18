@@ -30,6 +30,7 @@ model Lugar {
   paradas       RutaLugar[]
   sellos        Sello[]
   recompensas   RecompensaLugar[]
+  valoraciones  ValoracionLugar[]
 
   @@index([categoria])
 }
@@ -92,14 +93,28 @@ model RecompensaLugar {
 }
 
 model Usuario {
-  id           Int         @id @default(autoincrement())
-  email        String      @unique @db.VarChar(254)
-  passwordHash String      @db.VarChar(255)
+  id           Int               @id @default(autoincrement())
+  email        String            @unique @db.VarChar(254)
+  passwordHash String            @db.VarChar(255)
   rolId        Int
-  createdAt    DateTime    @default(now())
-  rol          Rol         @relation(fields: [rolId], references: [id], onDelete: Restrict)
-  lugar        Lugar?      @relation("PropietarioLugar")
+  createdAt    DateTime          @default(now())
+  rol          Rol               @relation(fields: [rolId], references: [id], onDelete: Restrict)
+  lugar        Lugar?            @relation("PropietarioLugar")
   recorridos   Recorrido[]
+  valoraciones ValoracionLugar[]
+}
+
+model ValoracionLugar {
+  usuarioId Int
+  lugarId   Int
+  estrellas Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  lugar     Lugar    @relation(fields: [lugarId], references: [id], onDelete: Cascade)
+
+  @@id([usuarioId, lugarId])
+  @@index([lugarId])
 }
 
 model Recorrido {
