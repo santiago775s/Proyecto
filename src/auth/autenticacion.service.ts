@@ -11,6 +11,7 @@ const usuarioPublicoSelect = {
   id: true,
   email: true,
   createdAt: true,
+  rol: { select: { nombre: true } },
 } as const;
 
 @Injectable()
@@ -27,11 +28,14 @@ export class AuthService {
     );
   }
 
-  async registrar(
-    datos: RegistrarDto,
-  ): Promise<{ id: number; email: string; createdAt: Date }> {
+  async registrar(datos: RegistrarDto): Promise<{
+    id: number;
+    email: string;
+    createdAt: Date;
+    rol: { nombre: string };
+  }> {
     const rol = await this.prisma.rol.findUniqueOrThrow({
-      where: { nombre: 'USUARIO' },
+      where: { nombre: datos.rol ?? 'USUARIO' },
       select: { id: true },
     });
     const usuario = await this.prisma.usuario.create({

@@ -12,7 +12,7 @@ export class AuthController {
 
   @Post('registro')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Registrar una cuenta de turista' })
+  @ApiOperation({ summary: 'Registrar una cuenta USUARIO o LOCAL' })
   @ApiCreatedResponse({ description: 'Cuenta creada sin exponer el hash' })
   registrar(@Body() datos: RegistrarDto) {
     return this.authService.registrar(datos);

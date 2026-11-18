@@ -37,12 +37,15 @@
 
 ## Cuentas locales de prueba
 
+Al ejecutar `npm run db:seed` fuera de producción se crean o actualizan estas
+cuentas. Sus contraseñas son solo para desarrollo local; no las uses en
+producción.
 
 | Rol     | Email predeterminado   | Contraseña predeterminada     |
 | ------- | ---------------------- | ----------------------------- |
-| ADMIN   | `admin@rutero.local`   | `ChangeThisAdminPassword123!` |
-| LOCAL   | `local@rutero.local`   | `ChangeThisLocalPassword123!` |
-| USUARIO | `usuario@rutero.local` | `ChangeThisUserPassword123!`  |
+| ADMIN   | `admin@rutero.local`   | `Admin123` |
+| LOCAL   | `local@rutero.local`   | `Local123` |
+| USUARIO | `usuario@rutero.local` | `User123`  |
 
 
 
@@ -50,6 +53,15 @@
 
 - Base URL: `http://localhost:3000/api/v1`
 - Swagger: `http://localhost:3000/api/docs`
+
+### Registro de cuentas
+
+`POST /api/v1/auth/registro` acepta `email`, `password` y, opcionalmente,
+`rol` con el valor `USUARIO` o `LOCAL`. Si se omite `rol`, se crea una cuenta
+`USUARIO`. `ADMIN` no puede elegirse durante el registro público.
+
+Las cuentas `LOCAL` se crean sin un lugar asignado. Un administrador debe
+asociarlas después con `PATCH /api/v1/usuarios/{id}/rol` y `lugarId`.
 
 ## Prisma Studio
 
