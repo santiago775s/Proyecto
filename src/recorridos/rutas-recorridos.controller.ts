@@ -31,6 +31,8 @@ export class RutasRecorridosController {
   @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
   @ApiOperation({
     summary: 'Iniciar un recorrido propio en una ruta activa',
+    description:
+      'Acceso: USUARIO y ADMIN autenticados. LOCAL no tiene permiso para gestionar recorridos. El recorrido queda asociado al usuario autenticado.',
   })
   @ApiParam({ name: 'rutaId', type: Number })
   @ApiCreatedResponse({ description: 'Recorrido iniciado' })

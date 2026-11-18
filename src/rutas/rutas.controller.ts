@@ -38,6 +38,8 @@ export class RutasController {
   @Permissions(PERMISOS.LUGARES_LEER)
   @ApiOperation({
     summary: 'Listar rutas activas con sus paradas y recompensa',
+    description:
+      'Acceso: ADMIN, LOCAL y USUARIO autenticados. Solo devuelve rutas activas.',
   })
   obtenerTodas() {
     return this.rutasService.obtenerTodas();
@@ -45,7 +47,11 @@ export class RutasController {
 
   @Get(':id')
   @Permissions(PERMISOS.LUGARES_LEER)
-  @ApiOperation({ summary: 'Consultar una ruta activa por su identificador' })
+  @ApiOperation({
+    summary: 'Consultar una ruta activa por su identificador',
+    description:
+      'Acceso: ADMIN, LOCAL y USUARIO autenticados. La ruta debe estar activa.',
+  })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   obtenerPorId(@Param('id', ParseIntPipe) id: number) {
     return this.rutasService.obtenerPorId(id);
@@ -54,7 +60,10 @@ export class RutasController {
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.RUTAS_ADMINISTRAR)
-  @ApiOperation({ summary: 'Crear una ruta' })
+  @ApiOperation({
+    summary: 'Crear una ruta',
+    description: 'Acceso: solo ADMIN autenticado.',
+  })
   @ApiCreatedResponse({ description: 'Ruta creada' })
   crear(@Body() datos: CrearRutaDto) {
     return this.rutasService.crear(datos);
@@ -63,7 +72,10 @@ export class RutasController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.RUTAS_ADMINISTRAR)
-  @ApiOperation({ summary: 'Actualizar una ruta' })
+  @ApiOperation({
+    summary: 'Actualizar una ruta',
+    description: 'Acceso: solo ADMIN autenticado.',
+  })
   @ApiParam({ name: 'id', type: Number })
   actualizar(
     @Param('id', ParseIntPipe) id: number,
@@ -75,7 +87,11 @@ export class RutasController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.RUTAS_ADMINISTRAR)
-  @ApiOperation({ summary: 'Eliminar una ruta' })
+  @ApiOperation({
+    summary: 'Eliminar una ruta',
+    description:
+      'Acceso: solo ADMIN autenticado. No se puede eliminar una ruta que ya tiene recorridos asociados.',
+  })
   @ApiParam({ name: 'id', type: Number })
   eliminar(@Param('id', ParseIntPipe) id: number) {
     return this.rutasService.eliminar(id);
@@ -84,7 +100,11 @@ export class RutasController {
   @Put(':id/paradas')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.RUTAS_ADMINISTRAR)
-  @ApiOperation({ summary: 'Reemplazar las paradas ordenadas de una ruta' })
+  @ApiOperation({
+    summary: 'Reemplazar las paradas ordenadas de una ruta',
+    description:
+      'Acceso: solo ADMIN autenticado. Las paradas deben tener lugares y órdenes únicos y consecutivos; no se puede modificar una ruta con recorridos asociados.',
+  })
   @ApiParam({ name: 'id', type: Number })
   actualizarParadas(
     @Param('id', ParseIntPipe) id: number,
@@ -96,7 +116,11 @@ export class RutasController {
   @Post(':id/recompensa')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.RUTAS_ADMINISTRAR)
-  @ApiOperation({ summary: 'Crear la recompensa de una ruta' })
+  @ApiOperation({
+    summary: 'Crear la recompensa de una ruta',
+    description:
+      'Acceso: solo ADMIN autenticado. La recompensa solo puede canjearse en lugares de la ruta.',
+  })
   @ApiParam({ name: 'id', type: Number })
   crearRecompensa(
     @Param('id', ParseIntPipe) id: number,

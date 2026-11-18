@@ -28,7 +28,11 @@ export class UsuariosController {
 
   @Patch(':id/rol')
   @Permissions(PERMISOS.USUARIOS_ROLES)
-  @ApiOperation({ summary: 'Asignar rol y local a un usuario' })
+  @ApiOperation({
+    summary: 'Asignar rol y local a un usuario',
+    description:
+      'Acceso: solo ADMIN autenticado. Permite asignar el rol USUARIO, LOCAL o ADMIN; al asignar LOCAL, también se debe indicar el lugar.',
+  })
   @ApiParam({ name: 'id', type: Number })
   asignarRol(
     @Param('id', ParseIntPipe) id: number,

@@ -46,7 +46,11 @@ export class LugaresController {
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.LUGARES_LEER)
-  @ApiOperation({ summary: 'Listar lugares con filtros y paginación' })
+  @ApiOperation({
+    summary: 'Listar lugares con filtros y paginación',
+    description:
+      'Acceso: ADMIN, LOCAL y USUARIO autenticados. Devuelve lugares activos y no expone códigos de sello.',
+  })
   @ApiOkResponse({ description: 'Página de lugares sin códigos de sello' })
   @ApiQuery({ name: 'categoria', required: false, enum: ['TIPICA', 'RAPIDA'] })
   @ApiQuery({ name: 'orden', required: false, enum: ['asc', 'desc'] })
@@ -64,7 +68,11 @@ export class LugaresController {
   @Get('estadisticas')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.ESTADISTICAS_TODAS)
-  @ApiOperation({ summary: 'Consultar conteos agregados de todos los lugares' })
+  @ApiOperation({
+    summary: 'Consultar conteos agregados de todos los lugares',
+    description:
+      'Acceso: solo ADMIN autenticado. Devuelve estadísticas agregadas de todos los lugares.',
+  })
   estadisticasTodas(@Query() filtro: FiltroFechaDto) {
     return this.estadisticas.deTodos(filtro);
   }
@@ -72,7 +80,11 @@ export class LugaresController {
   @Get(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.LUGARES_LEER)
-  @ApiOperation({ summary: 'Consultar un lugar por su identificador' })
+  @ApiOperation({
+    summary: 'Consultar un lugar por su identificador',
+    description:
+      'Acceso: ADMIN, LOCAL y USUARIO autenticados. Consulta un lugar por su ID; no incluye códigos de sello.',
+  })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   obtenerPorId(@Param('id', ParseIntPipe) id: number) {
     return this.lugaresService.obtenerPorId(id);
@@ -81,7 +93,11 @@ export class LugaresController {
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.LUGARES_ADMINISTRAR)
-  @ApiOperation({ summary: 'Crear un lugar' })
+  @ApiOperation({
+    summary: 'Crear un lugar',
+    description:
+      'Acceso: solo ADMIN autenticado. Crea un lugar y su sucursal principal.',
+  })
   @ApiCreatedResponse({ description: 'Lugar creado' })
   crear(@Body() datos: CrearLugarDto) {
     return this.lugaresService.crear(datos);
@@ -90,7 +106,11 @@ export class LugaresController {
   @Put(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.LUGARES_ADMINISTRAR)
-  @ApiOperation({ summary: 'Reemplazar los datos de un lugar' })
+  @ApiOperation({
+    summary: 'Reemplazar los datos de un lugar',
+    description:
+      'Acceso: solo ADMIN autenticado. Reemplaza los datos del lugar identificado.',
+  })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   reemplazar(
     @Param('id', ParseIntPipe) id: number,
@@ -102,7 +122,11 @@ export class LugaresController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.LUGARES_ADMINISTRAR)
-  @ApiOperation({ summary: 'Actualizar parcialmente un lugar' })
+  @ApiOperation({
+    summary: 'Actualizar parcialmente un lugar',
+    description:
+      'Acceso: solo ADMIN autenticado. Actualiza únicamente los campos enviados.',
+  })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   actualizar(
     @Param('id', ParseIntPipe) id: number,
@@ -114,7 +138,11 @@ export class LugaresController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.LUGARES_ADMINISTRAR)
-  @ApiOperation({ summary: 'Eliminar un lugar' })
+  @ApiOperation({
+    summary: 'Eliminar un lugar',
+    description:
+      'Acceso: solo ADMIN autenticado. Elimina el lugar identificado.',
+  })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiOkResponse({ description: 'Lugar eliminado' })
   eliminar(@Param('id', ParseIntPipe) id: number) {
@@ -124,7 +152,11 @@ export class LugaresController {
   @Post(':id/codigo/rotar')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISOS.SELLOS_CODIGO)
-  @ApiOperation({ summary: 'Rotar el código de sello de un lugar autorizado' })
+  @ApiOperation({
+    summary: 'Rotar el código de sello de un lugar autorizado',
+    description:
+      'Acceso: ADMIN y LOCAL autenticados. LOCAL solo puede rotar códigos del lugar que tiene asignado; ADMIN puede hacerlo para cualquier lugar. Si hay varias sucursales activas, indica sucursalId.',
+  })
   @ApiParam({ name: 'id', type: Number })
   rotarCodigo(
     @Param('id', ParseIntPipe) id: number,

@@ -18,7 +18,11 @@ export class EstadisticasController {
 
   @Get('estadisticas')
   @Permissions(PERMISOS.ESTADISTICAS_PROPIAS)
-  @ApiOperation({ summary: 'Consultar conteos del local asignado al usuario' })
+  @ApiOperation({
+    summary: 'Consultar conteos del local asignado al usuario',
+    description:
+      'Acceso: LOCAL autenticado con un lugar asignado. ADMIN tiene el permiso general, pero este endpoint busca un lugar asociado al usuario autenticado.',
+  })
   propias(
     @CurrentUser() usuario: UsuarioAutenticado,
     @Query() filtro: FiltroFechaDto,
