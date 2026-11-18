@@ -17,6 +17,7 @@ const passwordService = new PasswordService();
 
 const permisos = [
   { clave: 'lugares:leer', descripcion: 'Consultar lugares y rutas' },
+  { clave: 'lugares:valorar', descripcion: 'Valorar lugares' },
   { clave: 'lugares:administrar', descripcion: 'Administrar lugares' },
   {
     clave: 'rutas:administrar',
@@ -40,7 +41,7 @@ const permisos = [
 ] satisfies Prisma.PermisoCreateManyInput[];
 
 const roles = {
-  USUARIO: ['lugares:leer', 'recorridos:propios'],
+  USUARIO: ['lugares:leer', 'lugares:valorar', 'recorridos:propios'],
   LOCAL: [
     'lugares:leer',
     'estadisticas:propias',

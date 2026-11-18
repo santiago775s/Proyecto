@@ -33,6 +33,7 @@ import { CrearLugarDto } from './dto/crear-lugar.dto.js';
 import { ActualizarLugarDto } from './dto/actualizar-lugar.dto.js';
 import { FiltrarLugaresDto } from './dto/filtrar-lugares.dto.js';
 import { RotarCodigoSelloDto } from './dto/rotar-codigo-sello.dto.js';
+import { ValorarLugarDto } from './dto/valorar-lugar.dto.js';
 
 @ApiTags('Lugares')
 @ApiBearerAuth()
@@ -88,6 +89,22 @@ export class LugaresController {
   @ApiParam({ name: 'id', type: Number, example: 1 })
   obtenerPorId(@Param('id', ParseIntPipe) id: number) {
     return this.lugaresService.obtenerPorId(id);
+  }
+
+  @Post(':id/valoraciones')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISOS.LUGARES_VALORAR)
+  @ApiOperation({
+    summary: 'Crear o actualizar la valoración de un lugar',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 1 })
+  @ApiCreatedResponse({ description: 'Valoración registrada' })
+  valorar(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Body() datos: ValorarLugarDto,
+  ) {
+    return this.lugaresService.valorar(id, usuario.sub, datos.estrellas);
   }
 
   @Post()
