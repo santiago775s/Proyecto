@@ -32,7 +32,11 @@ export class RecorridosController {
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @ApiBearerAuth()
   @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
-  @ApiOperation({ summary: 'Listar los recorridos del usuario autenticado' })
+  @ApiOperation({
+    summary: 'Listar los recorridos del usuario autenticado',
+    description:
+      'Acceso: USUARIO y ADMIN autenticados. LOCAL no tiene permiso para gestionar recorridos. Devuelve solo recorridos propios.',
+  })
   propios(@CurrentUser() usuario: UsuarioAutenticado) {
     return this.recorridos.propios(usuario.sub);
   }
@@ -41,7 +45,11 @@ export class RecorridosController {
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @ApiBearerAuth()
   @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
-  @ApiOperation({ summary: 'Consultar un recorrido propio' })
+  @ApiOperation({
+    summary: 'Consultar un recorrido propio',
+    description:
+      'Acceso: USUARIO y ADMIN autenticados. LOCAL no tiene permiso para gestionar recorridos. Solo se puede consultar un recorrido propio.',
+  })
   @ApiParam({ name: 'id', type: Number })
   porId(
     @CurrentUser() usuario: UsuarioAutenticado,
@@ -51,10 +59,21 @@ export class RecorridosController {
   }
 
   @Post(':id/sellos')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
+  @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Sellar la siguiente parada del recorrido' })
+  @ApiOperation({
+    summary: 'Sellar la siguiente parada del recorrido propio',
+    description:
+      'Acceso: USUARIO y ADMIN autenticados. LOCAL no tiene permiso para gestionar recorridos. Solo se puede sellar la siguiente parada de un recorrido propio en el orden de la ruta.',
+  })
   @ApiParam({ name: 'id', type: Number })
-  sellar(@Param('id', ParseIntPipe) id: number, @Body() datos: CrearSelloDto) {
-    return this.recorridos.sellarDemo(id, datos);
+  sellar(
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() datos: CrearSelloDto,
+  ) {
+    return this.recorridos.sellar(usuario.sub, id, datos);
   }
 }

@@ -12,7 +12,11 @@ export class AuthController {
 
   @Post('registro')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Registrar una cuenta USUARIO o LOCAL' })
+  @ApiOperation({
+    summary: 'Registrar una cuenta USUARIO o LOCAL',
+    description:
+      'Acceso público, no requiere token. Solo admite los roles USUARIO o LOCAL; el rol ADMIN no puede registrarse mediante este endpoint.',
+  })
   @ApiCreatedResponse({ description: 'Cuenta creada sin exponer el hash' })
   registrar(@Body() datos: RegistrarDto) {
     return this.authService.registrar(datos);
@@ -20,7 +24,11 @@ export class AuthController {
 
   @Post('login')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Iniciar sesión y obtener un JWT' })
+  @ApiOperation({
+    summary: 'Iniciar sesión y obtener un JWT',
+    description:
+      'Acceso público, no requiere token. Disponible para cuentas ADMIN, LOCAL y USUARIO.',
+  })
   login(@Body() datos: LoginDto) {
     return this.authService.login(datos);
   }

@@ -146,21 +146,21 @@ async function main(): Promise<void> {
             'RUTERO_ADMIN_EMAIL',
             'admin@rutero.local',
           ).toLowerCase(),
-          password: getSeedValue('RUTERO_ADMIN_PASSWORD', 'Admin123'),
+          password: getSeedValue('RUTERO_ADMIN_PASSWORD', 'Admin1234567'),
         },
         local: {
           email: getSeedValue(
             'RUTERO_LOCAL_EMAIL',
             'local@rutero.local',
           ).toLowerCase(),
-          password: getSeedValue('RUTERO_LOCAL_PASSWORD', 'Local123'),
+          password: getSeedValue('RUTERO_LOCAL_PASSWORD', 'Local1234567'),
         },
         usuario: {
           email: getSeedValue(
             'RUTERO_USER_EMAIL',
             'usuario@rutero.local',
           ).toLowerCase(),
-          password: getSeedValue('RUTERO_USER_PASSWORD', 'User123'),
+          password: getSeedValue('RUTERO_USER_PASSWORD', 'User12345678'),
         },
       }
     : null;
@@ -180,11 +180,11 @@ async function main(): Promise<void> {
     }
     if (
       Object.values(demoUsers).some(
-        ({ password }) => password.length < 1 || password.length > 72,
+        ({ password }) => password.length < 12 || password.length > 72,
       )
     ) {
       throw new Error(
-        'Las contraseñas de prueba deben tener entre 1 y 72 caracteres',
+        'Las contraseñas de prueba deben tener entre 12 y 72 caracteres',
       );
     }
   }

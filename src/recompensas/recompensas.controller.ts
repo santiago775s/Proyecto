@@ -31,14 +31,22 @@ export class RecompensasController {
 
   @Get('me')
   @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
-  @ApiOperation({ summary: 'Listar recompensas del usuario autenticado' })
+  @ApiOperation({
+    summary: 'Listar recompensas del usuario autenticado',
+    description:
+      'Acceso: USUARIO y ADMIN autenticados. LOCAL no tiene permiso para consultar recompensas propias. Devuelve las recompensas de recorridos propios.',
+  })
   propias(@CurrentUser() usuario: UsuarioAutenticado) {
     return this.recompensas.propias(usuario.sub);
   }
 
   @Patch(':id/entregar')
   @Permissions(PERMISOS.RECOMPENSAS_CANJEAR)
-  @ApiOperation({ summary: 'Canjear una recompensa autorizada' })
+  @ApiOperation({
+    summary: 'Canjear una recompensa autorizada',
+    description:
+      'Acceso: LOCAL y ADMIN autenticados. LOCAL solo puede canjear recompensas en su lugar asignado y una sucursal autorizada; ADMIN puede canjear cualquier recompensa.',
+  })
   @ApiParam({ name: 'id', type: Number })
   entregar(
     @CurrentUser() usuario: UsuarioAutenticado,
@@ -60,6 +68,8 @@ export class RecompensasLocalController {
   @Permissions(PERMISOS.RECOMPENSAS_CANJEAR)
   @ApiOperation({
     summary: 'Listar recompensas pendientes del local sin datos personales',
+    description:
+      'Acceso: LOCAL y ADMIN autenticados. Las recompensas se filtran por los lugares asociados al usuario; LOCAL consulta las de su propio establecimiento.',
   })
   pendientes(@CurrentUser() usuario: UsuarioAutenticado) {
     return this.recompensas.pendientesDelLocal(usuario.sub);
