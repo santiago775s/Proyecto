@@ -51,10 +51,17 @@ export class RecorridosController {
   }
 
   @Post(':id/sellos')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
+  @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Sellar la siguiente parada del recorrido' })
+  @ApiOperation({ summary: 'Sellar la siguiente parada del recorrido propio' })
   @ApiParam({ name: 'id', type: Number })
-  sellar(@Param('id', ParseIntPipe) id: number, @Body() datos: CrearSelloDto) {
-    return this.recorridos.sellarDemo(id, datos);
+  sellar(
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() datos: CrearSelloDto,
+  ) {
+    return this.recorridos.sellar(usuario.sub, id, datos);
   }
 }

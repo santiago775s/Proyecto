@@ -1,10 +1,23 @@
-import { Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
 import {
+  Controller,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from '../auth/decorador-usuario-actual.decorator.js';
+import { JwtAuthGuard } from '../auth/guarda-jwt.guard.js';
+import type { UsuarioAutenticado } from '../auth/interfaces/usuario-autenticado.interface.js';
+import { PermissionsGuard } from '../autorizacion/permisos.guard.js';
+import { PERMISOS } from '../autorizacion/permisos.constants.js';
+import { Permissions } from '../autorizacion/permisos.decorator.js';
 import { RecorridosService } from './recorridos.service.js';
 
 @ApiTags('Recorridos')
@@ -13,10 +26,18 @@ export class RutasRecorridosController {
   constructor(private readonly recorridos: RecorridosService) {}
 
   @Post(':rutaId/recorridos')
-  @ApiOperation({ summary: 'Iniciar el recorrido demo de una ruta activa' })
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
+  @Permissions(PERMISOS.RECORRIDOS_PROPIOS)
+  @ApiOperation({
+    summary: 'Iniciar un recorrido propio en una ruta activa',
+  })
   @ApiParam({ name: 'rutaId', type: Number })
   @ApiCreatedResponse({ description: 'Recorrido iniciado' })
-  iniciar(@Param('rutaId', ParseIntPipe) rutaId: number) {
-    return this.recorridos.iniciarDemo(rutaId);
+  iniciar(
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Param('rutaId', ParseIntPipe) rutaId: number,
+  ) {
+    return this.recorridos.iniciar(usuario.sub, rutaId);
   }
 }

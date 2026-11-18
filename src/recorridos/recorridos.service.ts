@@ -79,8 +79,6 @@ const recorridoSelect = {
   },
 } satisfies Prisma.RecorridoSelect;
 
-const usuarioDemoEmail = 'turista@rutero.test';
-
 type RecorridoPublico = Prisma.RecorridoGetPayload<{
   select: typeof recorridoSelect;
 }>;
@@ -88,11 +86,6 @@ type RecorridoPublico = Prisma.RecorridoGetPayload<{
 @Injectable()
 export class RecorridosService {
   constructor(private readonly prisma: PrismaService) {}
-
-  async iniciarDemo(rutaId: number): Promise<RecorridoPublico> {
-    const usuarioId = await this.obtenerUsuarioDemoId();
-    return this.iniciar(usuarioId, rutaId);
-  }
 
   async iniciar(usuarioId: number, rutaId: number): Promise<RecorridoPublico> {
     try {
@@ -264,11 +257,6 @@ export class RecorridosService {
     }
   }
 
-  async sellarDemo(recorridoId: number, datos: CrearSelloDto) {
-    const usuarioId = await this.obtenerUsuarioDemoId();
-    return this.sellar(usuarioId, recorridoId, datos);
-  }
-
   async propios(usuarioId: number): Promise<RecorridoPublico[]> {
     return this.prisma.recorrido.findMany({
       where: { usuarioId },
@@ -301,18 +289,5 @@ export class RecorridosService {
       ruta: { ...recorrido.ruta, paradas },
       siguienteParada: paradas[siguienteIndex] ?? null,
     };
-  }
-
-  private async obtenerUsuarioDemoId(): Promise<number> {
-    const usuario = await this.prisma.usuario.findUnique({
-      where: { email: usuarioDemoEmail },
-      select: { id: true },
-    });
-    if (!usuario) {
-      throw new NotFoundException(
-        'No existe el usuario demo; ejecuta npm run db:seed',
-      );
-    }
-    return usuario.id;
   }
 }
